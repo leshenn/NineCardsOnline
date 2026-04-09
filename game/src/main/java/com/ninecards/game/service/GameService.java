@@ -1,12 +1,13 @@
 package com.ninecards.game.service;
 
-//import javax.smartcardio.Card;
+import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 
-import com.ninecards.game.model.Game;
 import com.ninecards.game.model.Card;
+import com.ninecards.game.model.Game;
 import com.ninecards.game.model.Player;
+import com.ninecards.game.model.Suit;
 
 @Service
 public class GameService {
@@ -18,6 +19,9 @@ public class GameService {
     }
 
     public String startGame(int numPlayers) {
+        if(numPlayers < 2 || numPlayers > 4) {
+            return "Please choose number of players between 2 and 4";
+        }
         game.initializeGame(numPlayers);
         return String.format(
             "Game started with %d players. Pre-joker: %s | Joker rank: %s",
@@ -39,8 +43,8 @@ public class GameService {
         game.playerPickUp(currentPlayer, playerChoice);
 
         String source = (playerChoice == 1) ? "the deck" : "the discard pile";
-        return String.format("Player %d picked up from %s. Hand: %s",
-            currentPlayer.getId(), source, currentPlayer.getHand());
+        return String.format("Player %d picked up from %s. \nHand:\n %s",
+            currentPlayer.getId(), source, currentPlayer.checkHand());
     }
 
     // Step 2 (optional): validate a set declared by the current player
@@ -49,19 +53,33 @@ public class GameService {
         if (!game.isRunning()) return "Game is over.";
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        boolean valid = game.validateSet(playerSet, currentPlayer);
+        boolean valid;
+        if(game.getNumberOfSets() != 4) {
+            valid = game.validateSet(playerSet, currentPlayer);
+        }
+        else{
+            valid = game.validateDonkeySuit(playerSet, currentPlayer);
+        }
+        
 
         return valid
             ? "Valid set! Player " + currentPlayer.getId() + " declared a set."
-            : "Invalid set. Cards must be consecutive and of the same suit (jokers are wild).";
+            : "Invalid set. Cards must be consecutive and of the same suit (jokers are wild) OR all sets are already created.";
     }
 
-    public String fillSet(int cardIdx) {
+    // Allow user to fill into set
+    public String fillSet(int cardIdx, Suit suit, String position) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        boolean valid = game.fillIntoSet(cardIdx, currentPlayer);
+        Card tempCard = currentPlayer.getCard(cardIdx - 1);
+        boolean valid = game.fillIntoSet(cardIdx, currentPlayer, suit, position);
         return valid
-            ? "You have filled a valid card " + currentPlayer.getCard(cardIdx-1).toString()
-            : "You cannot fill any set, you have choosen an invalid card";
+            ? "You have filled a valid card " + tempCard.toString()
+            : "You cannot fill any set, you have choosen an invalid card OR you need to come down before creating a set";
+    }
+
+    // Check all the existing sets
+    public ArrayList<String> allSets() {
+        return game.printSets();
     }
 
     // Step 3: current player discards, then we check win and advance the turn
@@ -109,6 +127,6 @@ public class GameService {
 
     public String getCurrentPlayerHand() {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        return "Player " + currentPlayer.getId() + "'s hand: " + currentPlayer.getHand();
+        return "Player " + currentPlayer.getId() + "'s hand: \n" + currentPlayer.checkHand();
     }
 }

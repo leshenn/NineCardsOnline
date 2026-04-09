@@ -25,9 +25,9 @@ public class Card {
     }
 
     public int getNumericValue() {
-        if (value == Value.ACE) {
-            return aceValue != null ? aceValue : 14; // resolved or default
-        }
+        //if (value == Value.ACE) {
+            //return aceValue != null ? aceValue : 14; // resolved or default
+        //}
         return value.getNumericValue(); // all other cards just use the enum
     }
 }

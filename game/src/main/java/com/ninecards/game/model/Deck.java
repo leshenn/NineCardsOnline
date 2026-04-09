@@ -42,6 +42,10 @@ public class Deck {
         discardPile.clear();
     }
 
+    public boolean isEmpty() {
+        return deck.isEmpty();
+    }
+
     /*
     public void iterateOverDeck() {
         for(Card card : deck) {

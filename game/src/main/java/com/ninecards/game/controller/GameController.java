@@ -1,11 +1,14 @@
 package com.ninecards.game.controller;
 
+import java.util.ArrayList;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ninecards.game.model.Suit;
 import com.ninecards.game.service.GameService;
 
 @RestController
@@ -37,8 +40,8 @@ public class GameController {
     }
 
     @PostMapping("/fillset")
-    public String fillSet(@RequestParam int cardIdx) {
-        return gameService.fillSet(cardIdx);
+    public String fillSet(@RequestParam int cardIdx, @RequestParam Suit suit, @RequestParam(required=false) String position) {
+        return gameService.fillSet(cardIdx, suit, position);
     }
     // POST /game/discard?discardIdx=2
     @PostMapping("/discard")
@@ -56,5 +59,10 @@ public class GameController {
     @GetMapping("/hand")
     public String getCurrentPlayerHand() {
         return gameService.getCurrentPlayerHand();
+    }
+
+    @GetMapping("/getsets")
+    public ArrayList<String> getAllSets() {
+        return gameService.allSets();
     }
 }

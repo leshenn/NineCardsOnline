@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Player extends Deck{
     private int id;
     private ArrayList<Card> hand = new ArrayList<>();
+    private boolean madeSet = false;
 
     public Player(int id, Deck deck) {
         this.id = id;
@@ -31,14 +32,15 @@ public class Player extends Deck{
 
     public ArrayList<String> checkHand() {
         //System.out.println("Player " + this.id + " hand:\n");
-        //int count = 1;
+        int count = 1;
         ArrayList<String> playerCards = new ArrayList<>();
         
         for(Card card : hand) {
             //System.out.print(count + ". ");
             //System.out.println(card);
             //count++;
-            playerCards.add(card.toString());
+            playerCards.add(count + ". " + card.toString() + "\n");
+            count++;
         }
 
         return playerCards;
@@ -59,5 +61,13 @@ public class Player extends Deck{
 
     public int getId() {
         return id;
+    }
+
+    public void setMadeSet(boolean response) {
+        madeSet = response; 
+    }
+
+    public boolean getMadeSet() {
+        return madeSet;
     }
 }
