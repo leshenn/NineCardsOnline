@@ -307,21 +307,25 @@ public class Game {
     private boolean tryFillIntoSuit(Suit cardSuit, Card card, int cardIdx, Player curPlayer, String position) {
         List<Card> cards = suitSets.get(cardSuit);
 
+        if (cards == null || cards.isEmpty()) return false;
+
         if(card.getValue() == joker) {
             if (position == null) return false; // must specify
 
             if (position.equalsIgnoreCase("start") && cards.get(0).getValue() != Value.ACE) {
                 cards.add(0, card);
+                curPlayer.removeCard(cardIdx - 1);
+                return true;
             } 
-            else if (position.equalsIgnoreCase("end") && cards.get(0).getValue() != Value.ACE) {
+            else if (position.equalsIgnoreCase("end") && cards.get(cards.size() - 1).getValue() != Value.ACE) {
                 cards.add(card);
+                curPlayer.removeCard(cardIdx - 1);
+                return true;
             } 
             else {
                 return false;
             }
         }
-
-        if (cards == null || cards.isEmpty()) return false;
 
         Card first = cards.get(0);
         Card last = cards.get(cards.size() - 1);
