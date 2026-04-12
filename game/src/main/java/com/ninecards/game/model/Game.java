@@ -20,7 +20,7 @@ public class Game {
     private int winner;
     private int numOfAlternations = 0;
     private final HashMap<Suit, List<Card>> suitSets = new HashMap<>();
-    private final List<Card> donkeySet = new ArrayList<>();
+    private final HashMap<Value, List<Card>> donkeySet = new HashMap<>();
     private int deckReshuffleTimes = 0;
     
     // Initialize the game
@@ -144,7 +144,7 @@ public class Game {
         Card firstRealCard = cardSet.get(startIndex);
 
         // If the first real card is ACE, decide its value based on what follows it
-        if (firstRealCard.getValue() == Value.ACE) {
+        if (firstRealCard.getValue() == Value.ACE && firstRealCard.getValue() != joker) {
             // Look at the next non-joker card to decide
             for (int i = startIndex + 1; i < cardSet.size(); i++) {
                 if (!cardSet.get(i).getValue().equals(joker)) {
@@ -170,7 +170,7 @@ public class Game {
             Card currentCard = cardSet.get(i);
 
             // Handle ACE appearing later in the set (must follow KING as 14)
-            if (currentCard.getValue() == Value.ACE) {
+            if (currentCard.getValue() != joker && currentCard.getValue() == Value.ACE) {
                 if (cardValue == 13) {
                     currentCard.getValue().setAceValue(14);
                 } else {
@@ -246,6 +246,7 @@ public class Game {
             }
         }
 
+        donkeySet.put(cardSet.get(startIndex).getValue(), new ArrayList<>(cardSet));
         return true;
     }
   
@@ -537,6 +538,10 @@ public class Game {
     public ArrayList<String> printSets() {
         ArrayList<String> allSets = new ArrayList<>();
         for(Map.Entry<Suit, List<Card>> entry : suitSets.entrySet()) {
+            allSets.add(entry.getKey() + " -> " + entry.getValue());
+        }
+
+        for(Map.Entry<Value, List<Card>> entry : donkeySet.entrySet()) {
             allSets.add(entry.getKey() + " -> " + entry.getValue());
         }
 

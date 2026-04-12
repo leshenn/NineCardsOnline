@@ -3,7 +3,7 @@ package com.ninecards.game.model;
 public class Card {
     private Suit suit;
     private Value value;
-    private Integer aceValue;
+    //private Integer aceValue;
 
     public Card(Suit suit, Value value) {
         this.suit = suit;
