@@ -1,6 +1,7 @@
 package com.ninecards.game.controller;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,12 +60,27 @@ public class GameController {
 
     // GET /game/hand
     @GetMapping("/hand")
-    public String getCurrentPlayerHand() {
+    public List<String> getCurrentPlayerHand() {
         return gameService.getCurrentPlayerHand();
     }
 
     @GetMapping("/getsets")
     public ArrayList<String> getAllSets() {
         return gameService.allSets();
+    }
+
+    @GetMapping("/currentplayer")
+    public int currentPlayer() {
+        return gameService.getCurrentPlayer();
+    }
+
+    @GetMapping("/prejoker")
+    public String getPreJoker() {
+        return gameService.getPreJoker();
+    }
+
+    @GetMapping("/joker")
+    public String getJoker() {
+        return gameService.getJoker();
     }
 }

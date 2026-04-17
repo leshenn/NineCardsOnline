@@ -1,6 +1,7 @@
 package com.ninecards.game.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -125,8 +126,22 @@ public class GameService {
             topDiscard);
     }
 
-    public String getCurrentPlayerHand() {
+    public List<String> getCurrentPlayerHand() {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        return "Player " + currentPlayer.getId() + "'s hand: \n" + currentPlayer.checkHand();
+        // return "Player " + currentPlayer.getId() + "'s hand: \n" + currentPlayer.checkHand();
+        return currentPlayer.checkHand();
+    }
+
+    public int getCurrentPlayer() {
+        return game.currentPlayerTurn();
+    }
+
+
+    public String getPreJoker() {
+        return game.getPreJoker().toString();
+    }
+
+    public String getJoker() {
+        return game.getJoker().toString();
     }
 }

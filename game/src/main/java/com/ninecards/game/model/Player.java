@@ -39,7 +39,8 @@ public class Player extends Deck{
             //System.out.print(count + ". ");
             //System.out.println(card);
             //count++;
-            playerCards.add(count + ". " + card.toString() + "\n");
+            //playerCards.add(count + ". " + card.toString() + "\n");
+            playerCards.add(card.toString());
             count++;
         }
 
