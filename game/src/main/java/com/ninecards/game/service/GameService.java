@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.ninecards.game.model.Card;
 import com.ninecards.game.model.Game;
+import com.ninecards.game.model.GameState;
 import com.ninecards.game.model.Player;
 import com.ninecards.game.model.Suit;
 
@@ -143,5 +144,10 @@ public class GameService {
 
     public String getJoker() {
         return game.getJoker().toString();
+    }
+
+
+    public GameState getFullGameState() {
+        return new GameState().getGameState(game);
     }
 }

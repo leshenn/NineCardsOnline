@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ninecards.game.model.GameState;
 import com.ninecards.game.model.Suit;
 import com.ninecards.game.service.GameService;
 
@@ -82,5 +83,10 @@ public class GameController {
     @GetMapping("/joker")
     public String getJoker() {
         return gameService.getJoker();
+    }
+
+    @GetMapping("/fullgamestate")
+    public GameState getFullGameState() {
+        return gameService.getFullGameState();
     }
 }
