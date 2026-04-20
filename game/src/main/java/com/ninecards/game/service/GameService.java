@@ -1,6 +1,7 @@
 package com.ninecards.game.service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -51,7 +52,7 @@ public class GameService {
 
     // Step 2 (optional): validate a set declared by the current player
     // playerSet is a comma-separated list of card indices e.g. "1,2,3"
-    public String declareSet(String playerSet) {
+    public String declareSet(LinkedHashSet<Integer> playerSet) {
         if (!game.isRunning()) return "Game is over.";
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());

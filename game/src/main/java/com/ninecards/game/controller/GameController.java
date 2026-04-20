@@ -1,6 +1,7 @@
 package com.ninecards.game.controller;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -39,7 +40,7 @@ public class GameController {
 
     // POST /game/set?playerSet=1,2,3
     @PostMapping("/set")
-    public String declareSet(@RequestParam String playerSet) {
+    public String declareSet(@RequestParam LinkedHashSet<Integer> playerSet) {
         return gameService.declareSet(playerSet);
     }
 

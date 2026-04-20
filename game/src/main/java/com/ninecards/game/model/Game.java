@@ -3,6 +3,7 @@ package com.ninecards.game.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -98,13 +99,13 @@ public class Game {
         
     }
 
-    public boolean validateSet(String playerSet, Player curPlayer) {
-        String[] parts = playerSet.split(",");
+    public boolean validateSet(LinkedHashSet<Integer> playerSet, Player curPlayer) {
+        //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
-        for(String part : parts) {
-            int idx = Integer.parseInt(part) - 1;
-            cardSet.add(curPlayer.getCard(idx));
+        for(Integer part : playerSet) {
+             // int idx = Integer.parseInt(part);
+             cardSet.add(curPlayer.getCard(part));
         }
 
         boolean isValid = checkSuits(cardSet);
@@ -112,8 +113,8 @@ public class Game {
         if (isValid) {
             // Sort indices highest to lowest so removing one doesn't shift the others
             List<Integer> indices = new ArrayList<>();
-            for (String part : parts) {
-                indices.add(Integer.parseInt(part.trim()) - 1);
+            for (Integer part : playerSet) {
+                indices.add(part);
             }
             indices.sort(Collections.reverseOrder());
             for (int idx : indices) {
@@ -209,13 +210,13 @@ public class Game {
         }
     }
 
-    public boolean validateDonkeySuit(String playerSet, Player curPlayer) {
-        String[] parts = playerSet.split(",");
+    public boolean validateDonkeySuit(LinkedHashSet<Integer> playerSet, Player curPlayer) {
+        //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
-        for(String part : parts) {
-            int idx = Integer.parseInt(part) - 1;
-            cardSet.add(curPlayer.getCard(idx));
+        for(Integer part : playerSet) {
+            //int idx = Integer.parseInt(part) - 1;
+            cardSet.add(curPlayer.getCard(part));
         }
 
         if(cardSet.size() != 4 || suitSets.size() != 4) {
