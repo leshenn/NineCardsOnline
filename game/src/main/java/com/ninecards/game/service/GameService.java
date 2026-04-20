@@ -76,7 +76,7 @@ public class GameService {
     // Allow user to fill into set
     public String fillSet(int cardIdx, Suit suit, String position) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        Card tempCard = currentPlayer.getCard(cardIdx - 1);
+        Card tempCard = currentPlayer.getCard(cardIdx);
         boolean valid = game.fillIntoSet(cardIdx, currentPlayer, suit, position);
         return valid
             ? "You have filled a valid card " + tempCard.toString()
@@ -94,12 +94,12 @@ public class GameService {
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
 
-        if (discardIdx < 1 || discardIdx > currentPlayer.handSize()) {
+        if (discardIdx < 0 || discardIdx > currentPlayer.handSize()) {
             return "Invalid index. Choose between 1 and " + currentPlayer.handSize();
         }
 
         // Save the card BEFORE removing it
-        String discardedCard = currentPlayer.getCard(discardIdx - 1).toString();
+        String discardedCard = currentPlayer.getCard(discardIdx).toString();
 
         game.playerDiscard(currentPlayer, discardIdx);
 
