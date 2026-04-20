@@ -100,6 +100,7 @@ public class Game {
     }
 
     public boolean validateSet(LinkedHashSet<Integer> playerSet, Player curPlayer) {
+        if(playerSet.size() < 3  && !curPlayer.getMadeSet()) return false;
         //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
@@ -221,7 +222,7 @@ public class Game {
             cardSet.add(curPlayer.getCard(part));
         }
 
-        if(cardSet.size() != 4 || suitSets.size() != 4) {
+        if(cardSet.size() != 4 || suitSets.size() != 4 || !suitSets.isEmpty()) {
             return false;
         }
 
