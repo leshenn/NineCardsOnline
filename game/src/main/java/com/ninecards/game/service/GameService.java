@@ -52,16 +52,17 @@ public class GameService {
 
     // Step 2 (optional): validate a set declared by the current player
     // playerSet is a comma-separated list of card indices e.g. "1,2,3"
-    public String declareSet(LinkedHashSet<Integer> playerSet) {
+    public String declareSet(List<Integer> playerSet) {
+        LinkedHashSet<Integer> set = new LinkedHashSet<>(playerSet);
         if (!game.isRunning()) return "Game is over.";
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         boolean valid;
         if(game.getNumberOfSets() != 4) {
-            valid = game.validateSet(playerSet, currentPlayer);
+            valid = game.validateSet(set, currentPlayer);
         }
         else{
-            valid = game.validateDonkeySuit(playerSet, currentPlayer);
+            valid = game.validateDonkeySuit(set, currentPlayer);
         }
         
 

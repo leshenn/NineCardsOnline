@@ -103,8 +103,9 @@ public class Game {
         //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
-        for(Integer part : playerSet) {
-             // int idx = Integer.parseInt(part);
+        for(int part : playerSet) {
+             //int idx = Integer.parseInt(part);
+             // cardSet.add(curPlayer.getCard(idx));
              cardSet.add(curPlayer.getCard(part));
         }
 
@@ -113,7 +114,8 @@ public class Game {
         if (isValid) {
             // Sort indices highest to lowest so removing one doesn't shift the others
             List<Integer> indices = new ArrayList<>();
-            for (Integer part : playerSet) {
+            for (int part : playerSet) {
+                //indices.add(Integer.parseInt(part));
                 indices.add(part);
             }
             indices.sort(Collections.reverseOrder());
@@ -214,8 +216,8 @@ public class Game {
         //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
-        for(Integer part : playerSet) {
-            //int idx = Integer.parseInt(part) - 1;
+        for(int part : playerSet) {
+            //int idx = Integer.parseInt(part);
             cardSet.add(curPlayer.getCard(part));
         }
 
