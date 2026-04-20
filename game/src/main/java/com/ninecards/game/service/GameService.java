@@ -1,6 +1,7 @@
 package com.ninecards.game.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import com.ninecards.game.model.Game;
 import com.ninecards.game.model.GameState;
 import com.ninecards.game.model.Player;
 import com.ninecards.game.model.Suit;
+import com.ninecards.game.model.Value;
 
 @Service
 public class GameService {
@@ -137,6 +139,14 @@ public class GameService {
 
     public int getCurrentPlayer() {
         return game.currentPlayerTurn();
+    }
+
+    public HashMap<Suit, List<Card>> getSuitSets() {
+        return game.getSuitSets();
+    }
+
+    public HashMap<Value, List<Card>> getDonkeySet() {
+        return game.getDonkeySet();
     }
 
 

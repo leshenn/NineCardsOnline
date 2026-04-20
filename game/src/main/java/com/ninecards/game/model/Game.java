@@ -552,6 +552,14 @@ public class Game {
         return allSets;
     }
 
+    public HashMap<Suit, List<Card>> getSuitSets() {
+        return suitSets;
+    }
+
+    public HashMap<Value, List<Card>> getDonkeySet() {
+        return donkeySet;
+    }
+
     public Card getPreJoker() {
         return preJoker;
     }

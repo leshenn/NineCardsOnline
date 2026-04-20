@@ -1,6 +1,7 @@
 package com.ninecards.game.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -11,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ninecards.game.model.Card;
 import com.ninecards.game.model.GameState;
 import com.ninecards.game.model.Suit;
+import com.ninecards.game.model.Value;
 import com.ninecards.game.service.GameService;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -89,5 +92,15 @@ public class GameController {
     @GetMapping("/fullgamestate")
     public GameState getFullGameState() {
         return gameService.getFullGameState();
+    }
+
+    @GetMapping("/suitsets")
+    public HashMap<Suit, List<Card>> getSuitSets() {
+        return gameService.getSuitSets();
+    }
+
+    @GetMapping("/donkeysets")
+    public HashMap<Value, List<Card>> getDonkeySets() {
+        return gameService.getDonkeySet();
     }
 }
