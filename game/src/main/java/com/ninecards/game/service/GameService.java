@@ -1,14 +1,18 @@
 package com.ninecards.game.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
 import com.ninecards.game.model.Card;
 import com.ninecards.game.model.Game;
+import com.ninecards.game.model.GameState;
 import com.ninecards.game.model.Player;
 import com.ninecards.game.model.Suit;
+import com.ninecards.game.model.Value;
 
 @Service
 public class GameService {
@@ -50,16 +54,17 @@ public class GameService {
 
     // Step 2 (optional): validate a set declared by the current player
     // playerSet is a comma-separated list of card indices e.g. "1,2,3"
-    public String declareSet(String playerSet) {
+    public String declareSet(List<Integer> playerSet) {
+        LinkedHashSet<Integer> set = new LinkedHashSet<>(playerSet);
         if (!game.isRunning()) return "Game is over.";
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         boolean valid;
         if(game.getNumberOfSets() != 4) {
-            valid = game.validateSet(playerSet, currentPlayer);
+            valid = game.validateSet(set, currentPlayer);
         }
         else{
-            valid = game.validateDonkeySuit(playerSet, currentPlayer);
+            valid = game.validateDonkeySuit(set, currentPlayer);
         }
         
 
@@ -71,7 +76,7 @@ public class GameService {
     // Allow user to fill into set
     public String fillSet(int cardIdx, Suit suit, String position) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        Card tempCard = currentPlayer.getCard(cardIdx - 1);
+        Card tempCard = currentPlayer.getCard(cardIdx);
         boolean valid = game.fillIntoSet(cardIdx, currentPlayer, suit, position);
         return valid
             ? "You have filled a valid card " + tempCard.toString()
@@ -89,12 +94,12 @@ public class GameService {
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
 
-        if (discardIdx < 1 || discardIdx > currentPlayer.handSize()) {
-            return "Invalid index. Choose between 1 and " + currentPlayer.handSize();
+        if (discardIdx < 0 || discardIdx > currentPlayer.handSize() - 1) {
+            return "Invalid index. Choose between 0 and " + (currentPlayer.handSize() - 1);
         }
 
         // Save the card BEFORE removing it
-        String discardedCard = currentPlayer.getCard(discardIdx - 1).toString();
+        String discardedCard = currentPlayer.getCard(discardIdx).toString();
 
         game.playerDiscard(currentPlayer, discardIdx);
 
@@ -136,6 +141,14 @@ public class GameService {
         return game.currentPlayerTurn();
     }
 
+    public HashMap<Suit, List<Card>> getSuitSets() {
+        return game.getSuitSets();
+    }
+
+    public HashMap<Value, List<Card>> getDonkeySet() {
+        return game.getDonkeySet();
+    }
+
 
     public String getPreJoker() {
         return game.getPreJoker().toString();
@@ -143,5 +156,10 @@ public class GameService {
 
     public String getJoker() {
         return game.getJoker().toString();
+    }
+
+
+    public GameState getFullGameState() {
+        return new GameState().getGameState(game);
     }
 }

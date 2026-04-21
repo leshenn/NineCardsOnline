@@ -3,8 +3,8 @@ package com.ninecards.game.model;
 import java.util.ArrayList;
 
 public class Player extends Deck{
-    private int id;
-    private ArrayList<Card> hand = new ArrayList<>();
+    private final int id;
+    private final ArrayList<Card> hand = new ArrayList<>();
     private boolean madeSet = false;
 
     public Player(int id, Deck deck) {
@@ -32,7 +32,7 @@ public class Player extends Deck{
 
     public ArrayList<String> checkHand() {
         //System.out.println("Player " + this.id + " hand:\n");
-        int count = 1;
+        //int count = 1;
         ArrayList<String> playerCards = new ArrayList<>();
         
         for(Card card : hand) {
@@ -41,7 +41,7 @@ public class Player extends Deck{
             //count++;
             //playerCards.add(count + ". " + card.toString() + "\n");
             playerCards.add(card.toString());
-            count++;
+            //count++;
         }
 
         return playerCards;
