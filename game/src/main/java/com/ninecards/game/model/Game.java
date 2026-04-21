@@ -94,7 +94,7 @@ public class Game {
         //curPlayer.checkHand();
         //System.out.println("What is the index of the card you want to discard: ");
         //int discardIdx = userInput.nextInt();
-        Card discardedCard = curPlayer.removeCard(discardIdx - 1);
+        Card discardedCard = curPlayer.removeCard(discardIdx);
         discardPile.add(discardedCard);
         
     }
@@ -279,7 +279,7 @@ public class Game {
             return false;
         }
 
-        Card card = curPlayer.getCard(cardIdx - 1);
+        Card card = curPlayer.getCard(cardIdx);
         Suit cardSuit = suit;
         boolean isAce = card.getValue() == Value.ACE;
 
@@ -315,16 +315,16 @@ public class Game {
         if (cards == null || cards.isEmpty()) return false;
 
         if(card.getValue() == joker) {
-            if (position == null) return false; // must specify
+            if (position == null || position.isEmpty()) return false; // must specify
 
             if (position.equalsIgnoreCase("start") && cards.get(0).getValue() != Value.ACE) {
                 cards.add(0, card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             } 
             else if (position.equalsIgnoreCase("end") && cards.get(cards.size() - 1).getValue() != Value.ACE) {
                 cards.add(card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             } 
             else {
@@ -339,12 +339,12 @@ public class Game {
         if (first.getValue() == joker) {
             if (checkFront(cards, card)) {
                 cards.add(0, card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             }
         } else if (first.getValue().getNumericValue() == card.getValue().getNumericValue() + 1 && cardSuit == card.getSuit()) {
             cards.add(0, card);
-            curPlayer.removeCard(cardIdx - 1);
+            curPlayer.removeCard(cardIdx);
             return true;
         }
 
@@ -352,12 +352,12 @@ public class Game {
         if (last.getValue() == joker) {
             if (checkEnd(cards, card)) {
                 cards.add(card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             }
         } else if (last.getValue().getNumericValue() == card.getValue().getNumericValue() - 1 && cardSuit == card.getSuit()) {
             cards.add(card);
-            curPlayer.removeCard(cardIdx - 1);
+            curPlayer.removeCard(cardIdx);
             return true;
         }
 
@@ -387,7 +387,7 @@ public class Game {
                 if (fitsLeft && fitsRight) {
                     Card jokerCard = cards.get(i);
                     cards.set(i, card);
-                    curPlayer.removeCard(cardIdx - 1);
+                    curPlayer.removeCard(cardIdx);
                     curPlayer.addToHandFromDiscard(jokerCard);
                     sortHand();
                     return true;
