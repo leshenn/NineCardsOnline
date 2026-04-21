@@ -23,7 +23,7 @@ public class GameState {
 
         state.topDiscard = game.hasDiscardPile()
             ? game.getDiscardPile().get(game.getDiscardPile().size() - 1).toString()
-            : "empty";
+            : "BACK CLUBS";
 
         state.isRunning = game.isRunning();
         state.winner = game.getWinner();

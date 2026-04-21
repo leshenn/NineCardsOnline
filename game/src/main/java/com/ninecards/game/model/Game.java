@@ -149,23 +149,23 @@ public class Game {
 
         // If the first real card is ACE, decide its value based on what follows it
         if (firstRealCard.getValue() == Value.ACE && firstRealCard.getValue() != joker) {
-            // Look at the next non-joker card to decide
+            int jokersBeforeNext = 0;
             for (int i = startIndex + 1; i < cardSet.size(); i++) {
-                if (!cardSet.get(i).getValue().equals(joker)) {
+                if (cardSet.get(i).getValue().equals(joker)) {
+                    jokersBeforeNext++;
+                } else {
                     int nextVal = cardSet.get(i).getValue().getNumericValue();
-                    // ACE fits before TWO (as 1), or after KING (as 14)
-                    if (nextVal == 2) {
+                    // ACE=1 is valid if nextVal equals 1 + jokers + 1
+                    if (nextVal == 1 + jokersBeforeNext + 1) {
                         firstRealCard.getValue().setAceValue(1);
-                    } else if (nextVal > 2) {
-                        // ACE doesn't fit before this card as value 1 either
+                    } else {
                         return false;
                     }
                     break;
                 }
             }
-            // If ACE is the only non-joker card, default to 1
-            // (jokers will fill in after it)
         }
+
 
         Suit setSuit = cardSet.get(startIndex).getSuit();
         int cardValue = cardSet.get(startIndex).getValue().getNumericValue();
