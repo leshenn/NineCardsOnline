@@ -1,9 +1,13 @@
 package com.ninecards.game.dto;
 
+import java.util.HashMap;
 import java.util.List;
 
+import com.ninecards.game.model.Card;
 import com.ninecards.game.model.Game;
 import com.ninecards.game.model.Player;
+import com.ninecards.game.model.Suit;
+import com.ninecards.game.model.Value;
 
 public class GameState {
     public int currentPlayer;
@@ -13,6 +17,8 @@ public class GameState {
     public String topDiscard;
     public boolean isRunning;
     public int winner;
+    public HashMap<Suit, List<Card>> suitSets;
+    public HashMap<Value, List<Card>> donkeySets;
 
     public GameState getGameState(Game game) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
@@ -30,6 +36,8 @@ public class GameState {
 
         state.isRunning = game.isRunning();
         state.winner = game.getWinner();
+        state.suitSets = game.getSuitSets();
+        state.donkeySets = game.getDonkeySet();
 
         return state;
     }

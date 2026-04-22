@@ -1,6 +1,5 @@
 package com.ninecards.game.service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,27 +16,16 @@ import com.ninecards.game.model.Value;
 @Service
 public class GameService {
 
-    private final Game game;
-
-    public GameService(Game game) {
-        this.game = game;
-    }
-
-    public String startGame(int numPlayers) {
-        if(numPlayers < 2 || numPlayers > 4) {
-            return "Please choose number of players between 2 and 4";
-        }
-        game.initializeGame(numPlayers);
-        return String.format(
-            "Game started with %d players. Pre-joker: %s | Joker rank: %s",
-            numPlayers,
-            game.getPreJoker(),
-            game.getJoker()
-        );
+    public int  startGame(int numPlayers, Game game) {
+         if(numPlayers < 2 || numPlayers > 4) {
+             return -1;
+         }
+         game.initializeGame(numPlayers);
+         return game.currentPlayerTurn();
     }
 
     // Step 1: current player picks up a card (1 = deck, 2 = discard pile)
-    public String pickUpCard(int playerChoice) {
+    public String pickUpCard(int playerChoice, Game game) {
         if (!game.isRunning()) return "Game is over. Player " + game.getWinner() + " won!";
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
@@ -54,7 +42,7 @@ public class GameService {
 
     // Step 2 (optional): validate a set declared by the current player
     // playerSet is a comma-separated list of card indices e.g. "1,2,3"
-    public String declareSet(List<Integer> playerSet) {
+    public String declareSet(List<Integer> playerSet, Game game) {
         LinkedHashSet<Integer> set = new LinkedHashSet<>(playerSet);
         if (!game.isRunning()) return "Game is over.";
 
@@ -74,7 +62,7 @@ public class GameService {
     }
 
     // Allow user to fill into set
-    public String fillSet(int cardIdx, Suit suit, String position) {
+    public String fillSet(int cardIdx, Suit suit, String position, Game game) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         Card tempCard = currentPlayer.getCard(cardIdx);
         boolean valid = game.fillIntoSet(cardIdx, currentPlayer, suit, position);
@@ -83,13 +71,13 @@ public class GameService {
             : "You cannot fill any set, you have choosen an invalid card OR you need to come down before creating a set";
     }
 
-    // Check all the existing sets
-    public ArrayList<String> allSets() {
-        return game.printSets();
-    }
+    // // Check all the existing sets
+    // public ArrayList<String> allSets(Game game) {
+    //     return game.printSets();
+    // }
 
     // Step 3: current player discards, then we check win and advance the turn
-    public String discardCard(int discardIdx) {
+    public String discardCard(int discardIdx, Game game) {
         if (!game.isRunning()) return "Game is over.";
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
@@ -115,51 +103,51 @@ public class GameService {
             game.getPlayer(game.currentPlayerTurn()).getId());
     }
 
-    // Returns a snapshot of the current game state
-    public String getGameState() {
-        if (!game.isRunning()) return "Game over. Winner: Player " + game.getWinner();
+    // // Returns a snapshot of the current game state
+    // public String getGameState(Game game) {
+    //     if (!game.isRunning()) return "Game over. Winner: Player " + game.getWinner();
 
-        Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        String topDiscard = game.hasDiscardPile()
-            ? game.getDiscardPile().get(game.getDiscardPile().size() - 1).toString()
-            : "empty";
+    //     Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
+    //     String topDiscard = game.hasDiscardPile()
+    //         ? game.getDiscardPile().get(game.getDiscardPile().size() - 1).toString()
+    //         : "empty";
 
-        return String.format("Turn: Player %d | Hand size: %d | Joker: %s | Top discard: %s",
-            currentPlayer.getId(),
-            currentPlayer.handSize(),
-            game.getJoker(),
-            topDiscard);
-    }
+    //     return String.format("Turn: Player %d | Hand size: %d | Joker: %s | Top discard: %s",
+    //         currentPlayer.getId(),
+    //         currentPlayer.handSize(),
+    //         game.getJoker(),
+    //         topDiscard);
+    // }
 
-    public List<String> getCurrentPlayerHand() {
-        Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        // return "Player " + currentPlayer.getId() + "'s hand: \n" + currentPlayer.checkHand();
-        return currentPlayer.checkHand();
-    }
+    // public List<String> getCurrentPlayerHand(Game game) {
+    //     Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
+    //     // return "Player " + currentPlayer.getId() + "'s hand: \n" + currentPlayer.checkHand();
+    //     return currentPlayer.checkHand();
+    // }
 
-    public int getCurrentPlayer() {
-        return game.currentPlayerTurn();
-    }
+    // public int getCurrentPlayer(Game game) {
+    //     return game.currentPlayerTurn();
+    // }
 
-    public HashMap<Suit, List<Card>> getSuitSets() {
+    public HashMap<Suit, List<Card>> getSuitSets(Game game) {
         return game.getSuitSets();
     }
 
-    public HashMap<Value, List<Card>> getDonkeySet() {
+    public HashMap<Value, List<Card>> getDonkeySet(Game game) {
         return game.getDonkeySet();
     }
 
 
-    public String getPreJoker() {
+    public String getPreJoker(Game game) {
         return game.getPreJoker().toString();
     }
 
-    public String getJoker() {
+    public String getJoker(Game game) {
         return game.getJoker().toString();
     }
 
 
-    public GameState getFullGameState() {
+    public GameState getFullGameState(Game game) {
         return new GameState().getGameState(game);
     }
 }
