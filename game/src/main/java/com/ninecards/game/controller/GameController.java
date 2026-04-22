@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ninecards.game.dto.GameState;
 import com.ninecards.game.model.Card;
-import com.ninecards.game.model.GameState;
 import com.ninecards.game.model.Suit;
 import com.ninecards.game.model.Value;
 import com.ninecards.game.service.GameService;

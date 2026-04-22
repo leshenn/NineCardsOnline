@@ -7,9 +7,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ninecards.game.dto.GameState;
 import com.ninecards.game.model.Card;
 import com.ninecards.game.model.Game;
-import com.ninecards.game.model.GameState;
 import com.ninecards.game.model.Player;
 import com.ninecards.game.model.Suit;
 import com.ninecards.game.model.Value;

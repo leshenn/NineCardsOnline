@@ -1,6 +1,9 @@
-package com.ninecards.game.model;
+package com.ninecards.game.dto;
 
 import java.util.List;
+
+import com.ninecards.game.model.Game;
+import com.ninecards.game.model.Player;
 
 public class GameState {
     public int currentPlayer;

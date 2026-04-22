@@ -1,8 +1,8 @@
 package com.ninecards.game.model;
 
 public class Card {
-    private Suit suit;
-    private Value value;
+    private final Suit suit;
+    private final Value value;
     //private Integer aceValue;
 
     public Card(Suit suit, Value value) {
