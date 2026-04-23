@@ -11,7 +11,8 @@ import com.ninecards.game.model.Value;
 
 public class GameState {
     public int currentPlayer;
-    public List<String> hand;
+    public List<String> hand;           // current player's hand (keep for now)
+    public HashMap<Integer, List<String>> allHands; // every player's hand
     public String joker;
     public String preJoker;
     public String topDiscard;
@@ -19,25 +20,31 @@ public class GameState {
     public int winner;
     public HashMap<Suit, List<Card>> suitSets;
     public HashMap<Value, List<Card>> donkeySets;
+    public String turnPhase; 
 
     public GameState getGameState(Game game) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
 
         GameState state = new GameState();
-
-        state.currentPlayer = game.currentPlayerTurn();
+        state.currentPlayer = currentPlayer.getId();
         state.hand = currentPlayer.checkHand();
+
+        // Build a map of ALL players' hands
+        state.allHands = new HashMap<>();
+        for (Player p : game.getPlayers()) {
+            state.allHands.put(p.getId(), p.checkHand());
+        }
+
         state.joker = game.getJoker().toString();
         state.preJoker = game.getPreJoker().toString();
-
         state.topDiscard = game.hasDiscardPile()
             ? game.getDiscardPile().get(game.getDiscardPile().size() - 1).toString()
             : "BACK CLUBS";
-
         state.isRunning = game.isRunning();
         state.winner = game.getWinner();
         state.suitSets = game.getSuitSets();
         state.donkeySets = game.getDonkeySet();
+        state.turnPhase = game.getTurnPhase();
 
         return state;
     }

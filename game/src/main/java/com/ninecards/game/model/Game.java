@@ -23,6 +23,7 @@ public class Game {
     private final HashMap<Suit, List<Card>> suitSets = new HashMap<>();
     private final HashMap<Value, List<Card>> donkeySet = new HashMap<>();
     private int deckReshuffleTimes = 0;
+    private String turnPhase = "pick"; // starts as pick
     
     // Initialize the game
     public void initializeGame(int numPlayers) {
@@ -588,4 +589,9 @@ public class Game {
     public Player getPlayer(int idx) {
         return players.get(idx);
     }
+
+    public List<Player> getPlayers() { return players; }
+
+    public String getTurnPhase() { return turnPhase; }
+    public void setTurnPhase(String turnPhase) { this.turnPhase = turnPhase; }
 }

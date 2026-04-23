@@ -34,7 +34,7 @@ public class GameService {
         if (playerChoice == 2 && !game.hasDiscardPile()) playerChoice = 1;
 
         game.playerPickUp(currentPlayer, playerChoice);
-
+        game.setTurnPhase("discard");
         String source = (playerChoice == 1) ? "the deck" : "the discard pile";
         return String.format("Player %d picked up from %s. \nHand:\n %s",
             currentPlayer.getId(), source, currentPlayer.checkHand());
@@ -90,6 +90,7 @@ public class GameService {
         String discardedCard = currentPlayer.getCard(discardIdx).toString();
 
         game.playerDiscard(currentPlayer, discardIdx);
+        game.setTurnPhase("pick");
 
         // Check win BEFORE incrementing so getWinner() still points to the right player
         game.checkGameStatus();

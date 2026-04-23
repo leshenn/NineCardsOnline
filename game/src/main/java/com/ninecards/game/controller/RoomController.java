@@ -1,15 +1,21 @@
 package com.ninecards.game.controller;
 
+import java.util.Map;
+
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ninecards.game.dto.GameState;
 import com.ninecards.game.dto.RoomResponse;
+import com.ninecards.game.model.Game;
 import com.ninecards.game.model.Room;
 import com.ninecards.game.model.RoomPlayer;
 import com.ninecards.game.model.RoomStatus;
+import com.ninecards.game.service.GameService;
 import com.ninecards.game.service.RoomManager;
 
 @CrossOrigin(origins = "http://localhost:5173")
@@ -17,16 +23,20 @@ import com.ninecards.game.service.RoomManager;
 @RequestMapping("/room")
 public class RoomController {
     private final RoomManager roomManager;
+    private final SimpMessagingTemplate messagingTemplate; // add this
+    private final GameService gameService;
     
-    public RoomController(RoomManager roomManager) {
+    public RoomController(RoomManager roomManager, SimpMessagingTemplate messagingTemplate, GameService gameService) {
         this.roomManager = roomManager;
+        this.messagingTemplate = messagingTemplate;
+        this.gameService = gameService;
     }
 
     // Create a new room
     @PostMapping("/create")
-    public RoomResponse createRoom(@RequestParam int maxPlayers) {
+    public RoomResponse createRoom(@RequestParam int maxPlayers, @RequestParam String playerName) {
         Room room = roomManager.createRoom(maxPlayers);
-        RoomPlayer host = new RoomPlayer(0, "Host");
+        RoomPlayer host = new RoomPlayer(1, playerName); // use playerName instead of "Host"
         room.addPlayer(host);
         return new RoomResponse(room.getRoomCode(), host.getId());
     }
@@ -40,9 +50,14 @@ public class RoomController {
         if (room.isFull()) return null;          // room is full
         if (room.getStatus() == RoomStatus.STARTED) return null; // game already started
 
-        int newPlayerId = room.getPlayers().size(); // 0 taken, so next is 1, then 2...
+        int newPlayerId = room.getPlayers().size() + 1; // 0 taken, so next is 1, then 2...
         RoomPlayer player = new RoomPlayer(newPlayerId, name);
         room.addPlayer(player);
+
+        // Tell everyone in the room someone joined
+        messagingTemplate.convertAndSend("/topic/room/" + code,
+            (Object)Map.of("event", "PLAYER_JOINED", "players", room.getPlayers().size(), "max", room.getMaxPlayers()));
+        
 
         return new RoomResponse(room.getRoomCode(), newPlayerId);
     }
@@ -55,8 +70,18 @@ public class RoomController {
         if (room == null) return "Room not found";
         if (room.getStatus() == RoomStatus.STARTED) return "Already started";
 
-        room.getGame().initializeGame(room.getPlayers().size());
+        Game game = new Game();
+        room.setGame(game);
+        game.initializeGame(room.getPlayers().size());
         room.setStatus(RoomStatus.STARTED);
+
+        // First tell everyone the game started
+        messagingTemplate.convertAndSend("/topic/room/" + code,
+            (Object) Map.of("event", "GAME_STARTED"));
+
+        // Then immediately send the full game state
+        GameState state = gameService.getFullGameState(game);
+        messagingTemplate.convertAndSend("/topic/room/" + code, (Object) state);
 
         return "Game started";
     }
