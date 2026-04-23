@@ -3,6 +3,7 @@ package com.ninecards.game.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -93,18 +94,20 @@ public class Game {
         //curPlayer.checkHand();
         //System.out.println("What is the index of the card you want to discard: ");
         //int discardIdx = userInput.nextInt();
-        Card discardedCard = curPlayer.removeCard(discardIdx - 1);
+        Card discardedCard = curPlayer.removeCard(discardIdx);
         discardPile.add(discardedCard);
         
     }
 
-    public boolean validateSet(String playerSet, Player curPlayer) {
-        String[] parts = playerSet.split(",");
+    public boolean validateSet(LinkedHashSet<Integer> playerSet, Player curPlayer) {
+        if(playerSet.size() < 3  && !curPlayer.getMadeSet()) return false;
+        //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
-        for(String part : parts) {
-            int idx = Integer.parseInt(part) - 1;
-            cardSet.add(curPlayer.getCard(idx));
+        for(int part : playerSet) {
+             //int idx = Integer.parseInt(part);
+             // cardSet.add(curPlayer.getCard(idx));
+             cardSet.add(curPlayer.getCard(part));
         }
 
         boolean isValid = checkSuits(cardSet);
@@ -112,8 +115,9 @@ public class Game {
         if (isValid) {
             // Sort indices highest to lowest so removing one doesn't shift the others
             List<Integer> indices = new ArrayList<>();
-            for (String part : parts) {
-                indices.add(Integer.parseInt(part.trim()) - 1);
+            for (int part : playerSet) {
+                //indices.add(Integer.parseInt(part));
+                indices.add(part);
             }
             indices.sort(Collections.reverseOrder());
             for (int idx : indices) {
@@ -209,16 +213,16 @@ public class Game {
         }
     }
 
-    public boolean validateDonkeySuit(String playerSet, Player curPlayer) {
-        String[] parts = playerSet.split(",");
+    public boolean validateDonkeySuit(LinkedHashSet<Integer> playerSet, Player curPlayer) {
+        //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
-        for(String part : parts) {
-            int idx = Integer.parseInt(part) - 1;
-            cardSet.add(curPlayer.getCard(idx));
+        for(int part : playerSet) {
+            //int idx = Integer.parseInt(part);
+            cardSet.add(curPlayer.getCard(part));
         }
 
-        if(cardSet.size() != 4 || suitSets.size() != 4) {
+        if(cardSet.size() != 4 || suitSets.size() != 4 || !suitSets.isEmpty()) {
             return false;
         }
 
@@ -275,7 +279,7 @@ public class Game {
             return false;
         }
 
-        Card card = curPlayer.getCard(cardIdx - 1);
+        Card card = curPlayer.getCard(cardIdx);
         Suit cardSuit = suit;
         boolean isAce = card.getValue() == Value.ACE;
 
@@ -315,12 +319,12 @@ public class Game {
 
             if (position.equalsIgnoreCase("start") && cards.get(0).getValue() != Value.ACE) {
                 cards.add(0, card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             } 
             else if (position.equalsIgnoreCase("end") && cards.get(cards.size() - 1).getValue() != Value.ACE) {
                 cards.add(card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             } 
             else {
@@ -335,12 +339,12 @@ public class Game {
         if (first.getValue() == joker) {
             if (checkFront(cards, card)) {
                 cards.add(0, card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             }
         } else if (first.getValue().getNumericValue() == card.getValue().getNumericValue() + 1 && cardSuit == card.getSuit()) {
             cards.add(0, card);
-            curPlayer.removeCard(cardIdx - 1);
+            curPlayer.removeCard(cardIdx);
             return true;
         }
 
@@ -348,12 +352,12 @@ public class Game {
         if (last.getValue() == joker) {
             if (checkEnd(cards, card)) {
                 cards.add(card);
-                curPlayer.removeCard(cardIdx - 1);
+                curPlayer.removeCard(cardIdx);
                 return true;
             }
         } else if (last.getValue().getNumericValue() == card.getValue().getNumericValue() - 1 && cardSuit == card.getSuit()) {
             cards.add(card);
-            curPlayer.removeCard(cardIdx - 1);
+            curPlayer.removeCard(cardIdx);
             return true;
         }
 
@@ -383,7 +387,7 @@ public class Game {
                 if (fitsLeft && fitsRight) {
                     Card jokerCard = cards.get(i);
                     cards.set(i, card);
-                    curPlayer.removeCard(cardIdx - 1);
+                    curPlayer.removeCard(cardIdx);
                     curPlayer.addToHandFromDiscard(jokerCard);
                     sortHand();
                     return true;
@@ -546,6 +550,14 @@ public class Game {
         }
 
         return allSets;
+    }
+
+    public HashMap<Suit, List<Card>> getSuitSets() {
+        return suitSets;
+    }
+
+    public HashMap<Value, List<Card>> getDonkeySet() {
+        return donkeySet;
     }
 
     public Card getPreJoker() {
