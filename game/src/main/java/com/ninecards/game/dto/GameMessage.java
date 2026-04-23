@@ -14,6 +14,7 @@ public class GameMessage {
     public String roomCode;
     public Integer playerId;
     public String phase;
+    public boolean madeSet;
 
     public GameMessage() {}
 }

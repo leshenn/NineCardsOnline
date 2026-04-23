@@ -21,6 +21,7 @@ public class GameState {
     public HashMap<Suit, List<Card>> suitSets;
     public HashMap<Value, List<Card>> donkeySets;
     public String turnPhase; 
+    public boolean madeSet;
 
     public GameState getGameState(Game game) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
@@ -45,7 +46,8 @@ public class GameState {
         state.suitSets = game.getSuitSets();
         state.donkeySets = game.getDonkeySet();
         state.turnPhase = game.getTurnPhase();
-
+        state.madeSet = currentPlayer.getMadeSet();
+        
         return state;
     }
 }

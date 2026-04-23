@@ -55,4 +55,8 @@ public class RoomManager {
         room.addPlayer(player);
         return player;
     }
+
+    public Map<String, Room> getAllRooms() {
+        return rooms;
+    }
 }

@@ -23,7 +23,6 @@ public class GameWebSocketController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    // helper so you dont repeat this line in every method
     private Game getGame(String roomCode) {
         return roomManager.getRoom(roomCode).getGame();
     }

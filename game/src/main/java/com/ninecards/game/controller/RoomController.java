@@ -1,9 +1,14 @@
 package com.ninecards.game.controller;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -85,4 +90,24 @@ public class RoomController {
 
         return "Game started";
     }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<Map<String, Object>>> listRooms() {
+        Map<String, Room> allRooms = roomManager.getAllRooms();
+        
+        List<Map<String, Object>> result = allRooms.values().stream()
+            .filter(room -> room.getStatus() != RoomStatus.STARTED) // only show open rooms
+            .map(room -> {
+                Map<String, Object> r = new HashMap<>();
+                r.put("roomCode", room.getRoomCode());
+                r.put("playerCount", room.getPlayers().size());
+                r.put("maxPlayers", room.getMaxPlayers());
+                return r;
+            })
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(result);
+    }
+
+
 }
