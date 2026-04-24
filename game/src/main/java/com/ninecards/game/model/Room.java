@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Room {
-    private String roomCode;          // "ABC123"
-    private int maxPlayers;           // 2, 3 or 4
-    private RoomStatus status;        // WAITING or STARTED
-    private List<RoomPlayer> players; // who has joined
-    private Game game;                // the actual game, null until started
+    private final String roomCode;          
+    private final int maxPlayers;           
+    private RoomStatus status;        
+    private final List<RoomPlayer> players; 
+    private Game game;                
 
     public Room(String roomCode, int maxPlayers) {
         this.roomCode = roomCode;

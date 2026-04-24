@@ -63,6 +63,7 @@ public class GameWebSocketController {
     @MessageMapping("/fillset")
     public void fillSet(GameMessage msg) {
         Game game = getGame(msg.roomCode);
+
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         if (currentPlayer.getId() != msg.playerId) return;
 

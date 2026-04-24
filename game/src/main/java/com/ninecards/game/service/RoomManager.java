@@ -14,7 +14,7 @@ import com.ninecards.game.model.RoomStatus;
 public class RoomManager {
     private final Map<String, Room> rooms = new HashMap<>();
 
-    // 1. Generate a unique code
+    // Generate a unique code
     private String generateCode() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         Random random = new Random();
@@ -29,7 +29,7 @@ public class RoomManager {
         return code;
     }
 
-    // 2. Create a new room
+    // Create a new room
     public Room createRoom(int maxPlayers) {
         String code = generateCode();
         Room room = new Room(code, maxPlayers);
@@ -37,7 +37,7 @@ public class RoomManager {
         return room;
     }
 
-    // 3. Find an existing room
+    // Find an existing room
     public Room getRoom(String code) {
         return rooms.get(code);
     }

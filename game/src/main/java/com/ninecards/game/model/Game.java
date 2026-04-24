@@ -23,7 +23,7 @@ public class Game {
     private final HashMap<Suit, List<Card>> suitSets = new HashMap<>();
     private final HashMap<Value, List<Card>> donkeySet = new HashMap<>();
     private int deckReshuffleTimes = 0;
-    private String turnPhase = "pick"; // starts as pick
+    private String turnPhase = "pick";
     
     // Initialize the game
     public void initializeGame(int numPlayers) {
@@ -35,9 +35,8 @@ public class Game {
 
     // Create the playes and allcate their cards
     public void createPlayers(int numPlayers) {
-
         if(numPlayers < 2 || numPlayers > 4) {
-            throw new IllegalArgumentException("Number of players must be between 2 and 4");        
+            return;        
         }
 
         players.clear();
@@ -92,12 +91,8 @@ public class Game {
     }
 
     public void playerDiscard(Player curPlayer, int discardIdx) {
-        //curPlayer.checkHand();
-        //System.out.println("What is the index of the card you want to discard: ");
-        //int discardIdx = userInput.nextInt();
         Card discardedCard = curPlayer.removeCard(discardIdx);
         discardPile.add(discardedCard);
-        
     }
 
     public boolean validateSet(LinkedHashSet<Integer> playerSet, Player curPlayer) {
@@ -105,12 +100,9 @@ public class Game {
 
         if (playerSet.size() < minSize) return false;
 
-        //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
         for(int part : playerSet) {
-             //int idx = Integer.parseInt(part);
-             // cardSet.add(curPlayer.getCard(idx));
              cardSet.add(curPlayer.getCard(part));
         }
 
@@ -120,7 +112,6 @@ public class Game {
             // Sort indices highest to lowest so removing one doesn't shift the others
             List<Integer> indices = new ArrayList<>();
             for (int part : playerSet) {
-                //indices.add(Integer.parseInt(part));
                 indices.add(part);
             }
             indices.sort(Collections.reverseOrder());
@@ -142,10 +133,8 @@ public class Game {
             }
         }   
 
-        
         // This handles the case where the player only has jokers in their set, we can just return true because they can be any card
         if (startIndex == -1) {
-            //throw new IllegalArgumentException("You cannot make a set with all jokers");
             return false; // all jokers
         }
 
@@ -188,7 +177,6 @@ public class Game {
 
             int currentCardValue = currentCard.getValue().getNumericValue();
             if((currentCard.getSuit().equals(setSuit) && currentCardValue == cardValue + 1) || currentCard.getValue().equals(joker)) {
-                //System.out.println("Card " + currentCard + " is valid for the set");
                 if(currentCard.getValue().equals(joker)) {
                     cardValue++;
                     continue;
@@ -207,8 +195,6 @@ public class Game {
         // Check if the suit already exists in the map
         if (suitSets.containsKey(suit)) {
             // If it exists, simply add all the cards to the existing list
-            // suitSets.get(suit).addAll(cards);
-            // throw new IllegalArgumentException("You cannot create a set of a suit that has already been created, you have to create a donkey set");
             return false;
         } else {
             // If it doesn't exist, put the suit and the new list of cards in the map
@@ -218,11 +204,9 @@ public class Game {
     }
 
     public boolean validateDonkeySuit(LinkedHashSet<Integer> playerSet, Player curPlayer) {
-        //String[] parts = playerSet.split(",");
         List<Card> cardSet = new ArrayList<>();
 
         for(int part : playerSet) {
-            //int idx = Integer.parseInt(part);
             cardSet.add(curPlayer.getCard(part));
         }
 
@@ -244,7 +228,6 @@ public class Game {
 
         // This handles the case where the player only has jokers in their set, we can just return true because they can be any card
         if (startIndex == -1) {
-            //throw new IllegalArgumentException("You cannot make a set with all jokers");
             return false; // all jokers
         }
 
@@ -326,28 +309,63 @@ public class Game {
                 boolean firstIsRealAce = firstCard.getValue() == Value.ACE && firstCard.getValue() != joker;
                 if (firstIsRealAce) return false; // real ACE at start, ambiguous, block
 
-                // joker or normal card at start — check numeric fit
-                int firstValue = firstCard.getValue().getNumericValue();
-                if (card.getValue().getNumericValue() == firstValue - 1) {
+                boolean firstCardIsNormal = firstCard.getValue() != joker;
+                if(firstCardIsNormal) {
                     cards.add(0, card);
                     curPlayer.removeCard(cardIdx);
                     return true;
                 }
+
+                if(firstCard.getValue() == joker && checkFront(cards, null)) {
+                    cards.add(0, card);
+                    curPlayer.removeCard(cardIdx);
+                    return true;
+                }
+
                 return false;
+
+                // // joker or normal card at start — check numeric fit
+                // int firstValue = firstCard.getValue().getNumericValue();
+
+                // cards.add(0, card);
+                // curPlayer.removeCard(cardIdx);
+                // return true;
+                // // if (card.getValue().getNumericValue() == firstValue - 1) {
+                // //     cards.add(0, card);
+                // //     curPlayer.removeCard(cardIdx);
+                // //     return true;
+                // // }
+                // // return false;
             }
             else if (position.equalsIgnoreCase("end")) {
                 Card lastCard = cards.get(cards.size() - 1);
                 boolean lastIsRealAce = lastCard.getValue() == Value.ACE && lastCard.getValue() != joker;
                 if (lastIsRealAce) return false; // real ACE at end, ambiguous, block
 
-                // joker or normal card at end — check numeric fit
-                int lastValue = lastCard.getValue().getNumericValue();
-                if (card.getValue().getNumericValue() == lastValue + 1) {
+
+                boolean lastCardNotAce = lastCard.getValue() != joker;
+                if(lastCardNotAce) {
                     cards.add(card);
                     curPlayer.removeCard(cardIdx);
                     return true;
                 }
+
+                if(lastCard.getValue() == joker && checkEnd(cards, null)) {
+                    cards.add(card);
+                    curPlayer.removeCard(cardIdx);
+                    return true;
+                }
+
                 return false;
+
+                // // joker or normal card at end — check numeric fit
+                // int lastValue = lastCard.getValue().getNumericValue();
+                // if (card.getValue().getNumericValue() == lastValue + 1) {
+                //     cards.add(card);
+                //     curPlayer.removeCard(cardIdx);
+                //     return true;
+                // }
+                // return false;
             }
             else {
                 return false;
@@ -357,7 +375,7 @@ public class Game {
         Card first = cards.get(0);
         Card last = cards.get(cards.size() - 1);
 
-        // --- Check FRONT ---
+        //Check FRONT
         if (first.getValue() == joker) {
             if (checkFront(cards, card)) {
                 cards.add(0, card);
@@ -370,7 +388,7 @@ public class Game {
             return true;
         }
 
-        // --- Check END ---
+        // Check END
         if (last.getValue() == joker) {
             if (checkEnd(cards, card)) {
                 cards.add(card);
@@ -383,7 +401,7 @@ public class Game {
             return true;
         }
 
-        // --- Check joker replacement inside the set ---
+        // Check joker replacement inside the set
         for (int i = 0; i < cards.size(); i++) {
             if (cards.get(i).getValue() == joker) {
                 Integer leftValue = null;
@@ -403,10 +421,12 @@ public class Game {
                 }
 
                 int newValue = card.getValue().getNumericValue();
+                // Corrected the filling of cards to take jokers
                 boolean fitsLeft = (leftValue == null) || (newValue > leftValue);
                 boolean fitsRight = (rightValue == null) || (newValue < rightValue);
+                boolean fitsSuit = cardSuit == card.getSuit();
 
-                if (fitsLeft && fitsRight) {
+                if (fitsLeft && fitsRight && fitsSuit) {
                     Card jokerCard = cards.get(i);
                     cards.set(i, card);
                     curPlayer.removeCard(cardIdx);
@@ -420,40 +440,53 @@ public class Game {
         return false;
     }
 
-
     public boolean checkFront(List<Card> cards, Card card) {
         int jokerCount = 0;
         int targetCard = -1;
-        //Card targetCard;
-        for(Card setCard : cards) {
-            if(setCard.getValue() == joker) {
+
+        for (Card setCard : cards) {
+            if (setCard.getValue() == joker) {
                 jokerCount++;
-            }
-            else {
+            } else {
                 targetCard = setCard.getNumericValue();
                 break;
             }
         }
 
-        return targetCard - 1 - jokerCount == card.getNumericValue();
+        if (targetCard == -1) return false; // all jokers, can't determine front
+
+        int requiredValue = targetCard - 1 - jokerCount;
+
+        if (card != null) {
+            return requiredValue == card.getNumericValue();
+        } else {
+            return requiredValue > 0; // front can still be extended (not at Ace)
+        }
     }
 
     public boolean checkEnd(List<Card> cards, Card card) {
         int jokerCount = 0;
         int targetCard = -1;
-        //Card targetCard;
-        for(int i = cards.size() - 1; i > -1; i--) {
+
+        for (int i = cards.size() - 1; i > -1; i--) {
             Card setCard = cards.get(i);
-            if(setCard.getValue() == joker) {
+            if (setCard.getValue() == joker) {
                 jokerCount++;
-            }
-            else {
+            } else {
                 targetCard = setCard.getNumericValue();
                 break;
             }
         }
 
-        return targetCard + 1 + jokerCount == card.getNumericValue();
+        if (targetCard == -1) return false; // all jokers
+
+        int requiredValue = targetCard + 1 + jokerCount;
+
+        if (card != null) {
+            return requiredValue == card.getNumericValue();
+        } else {
+            return requiredValue < 15; // end can still be extended (not at King/highest)
+        }
     }
 
     // This just gets the index of the player so we can deal with them

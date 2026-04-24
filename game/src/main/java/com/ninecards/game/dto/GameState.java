@@ -11,8 +11,7 @@ import com.ninecards.game.model.Value;
 
 public class GameState {
     public int currentPlayer;
-    public List<String> hand;           // current player's hand (keep for now)
-    public HashMap<Integer, List<String>> allHands; // every player's hand
+    public HashMap<Integer, List<String>> allHands;
     public String joker;
     public String preJoker;
     public String topDiscard;
@@ -28,7 +27,6 @@ public class GameState {
 
         GameState state = new GameState();
         state.currentPlayer = currentPlayer.getId();
-        state.hand = currentPlayer.checkHand();
 
         // Build a map of ALL players' hands
         state.allHands = new HashMap<>();

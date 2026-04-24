@@ -35,7 +35,6 @@ public class Deck {
     }
 
 
-    // Come back to this, lets think about this logic later this is just a template to me later changed
     public void reshuffleFromDiscard(List<Card> discardPile) {
         deck.addAll(discardPile);
         Collections.shuffle(deck);
@@ -46,11 +45,4 @@ public class Deck {
         return deck.isEmpty();
     }
 
-    /*
-    public void iterateOverDeck() {
-        for(Card card : deck) {
-            System.out.println(card.toString());
-        }
-    }
-    */
 }

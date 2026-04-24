@@ -31,21 +31,12 @@ public class Player extends Deck{
     }
 
     public ArrayList<String> checkHand() {
-        //System.out.println("Player " + this.id + " hand:\n");
-        //int count = 1;
         ArrayList<String> playerCards = new ArrayList<>();
         
         for(Card card : hand) {
-            //System.out.print(count + ". ");
-            //System.out.println(card);
-            //count++;
-            //playerCards.add(count + ". " + card.toString() + "\n");
             playerCards.add(card.toString());
-            //count++;
         }
-
         return playerCards;
-        //System.out.println();
     }
 
     public ArrayList<Card> getHand() {
