@@ -23,7 +23,7 @@ import com.ninecards.game.model.RoomStatus;
 import com.ninecards.game.service.GameService;
 import com.ninecards.game.service.RoomManager;
 
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = {"http://localhost:5173", "http://192.168.18.116:5173"})
 @RestController
 @RequestMapping("/room")
 public class RoomController {

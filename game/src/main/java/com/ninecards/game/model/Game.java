@@ -321,16 +321,34 @@ public class Game {
         if(card.getValue() == joker) {
             if (position == null || position.isEmpty()) return false; // must specify
 
-            if (position.equalsIgnoreCase("start") && cards.get(0).getValue() != Value.ACE) {
-                cards.add(0, card);
-                curPlayer.removeCard(cardIdx);
-                return true;
-            } 
-            else if (position.equalsIgnoreCase("end") && cards.get(cards.size() - 1).getValue() != Value.ACE) {
-                cards.add(card);
-                curPlayer.removeCard(cardIdx);
-                return true;
-            } 
+            if (position.equalsIgnoreCase("start")) {
+                Card firstCard = cards.get(0);
+                boolean firstIsRealAce = firstCard.getValue() == Value.ACE && firstCard.getValue() != joker;
+                if (firstIsRealAce) return false; // real ACE at start, ambiguous, block
+
+                // joker or normal card at start — check numeric fit
+                int firstValue = firstCard.getValue().getNumericValue();
+                if (card.getValue().getNumericValue() == firstValue - 1) {
+                    cards.add(0, card);
+                    curPlayer.removeCard(cardIdx);
+                    return true;
+                }
+                return false;
+            }
+            else if (position.equalsIgnoreCase("end")) {
+                Card lastCard = cards.get(cards.size() - 1);
+                boolean lastIsRealAce = lastCard.getValue() == Value.ACE && lastCard.getValue() != joker;
+                if (lastIsRealAce) return false; // real ACE at end, ambiguous, block
+
+                // joker or normal card at end — check numeric fit
+                int lastValue = lastCard.getValue().getNumericValue();
+                if (card.getValue().getNumericValue() == lastValue + 1) {
+                    cards.add(card);
+                    curPlayer.removeCard(cardIdx);
+                    return true;
+                }
+                return false;
+            }
             else {
                 return false;
             }

@@ -1,5 +1,7 @@
 package com.ninecards.game.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -47,6 +49,14 @@ public class GameWebSocketController {
         if (currentPlayer.getId() != msg.playerId) return;
 
         gameService.declareSet(msg.cardIndexes, game);
+
+        // Check for winner
+        if (currentPlayer.getHand().isEmpty()) {
+            messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode,
+                (Object)Map.of("event", "GAME_OVER", "winner", currentPlayer.getId()));
+            return;
+        }
+        
         GameState state = gameService.getFullGameState(game);
         messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode, state);
     }
@@ -68,6 +78,14 @@ public class GameWebSocketController {
         if (currentPlayer.getId() != msg.playerId) return;
 
         gameService.discardCard(msg.discardIdx, game);
+
+        // Check for winner
+        if (currentPlayer.getHand().isEmpty()) {
+            messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode,
+                (Object)Map.of("event", "GAME_OVER", "winner", currentPlayer.getId()));
+            return;
+        }
+        
         GameState state = gameService.getFullGameState(game);
         messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode, state);
     }
