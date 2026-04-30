@@ -1,8 +1,8 @@
 package com.ninecards.game.model;
 
 public class RoomPlayer {
-    private int id;
-    private String name;
+    private final int id;
+    private final String name;
 
     public RoomPlayer(int id, String name) {
         this.id = id;

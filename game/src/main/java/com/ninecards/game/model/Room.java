@@ -22,6 +22,7 @@ public class Room {
     public int getMaxPlayers() { return maxPlayers; }
     public RoomStatus getStatus() { return status; }
     public List<RoomPlayer> getPlayers() { return players; }
+    public String getHostName() { return players.get(0).getName(); }
     public Game getGame() { return game; }
     public void setStatus(RoomStatus status) { this.status = status; }
     public void setGame(Game game) { this.game = game; }

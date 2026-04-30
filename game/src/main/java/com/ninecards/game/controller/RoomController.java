@@ -43,7 +43,17 @@ public class RoomController {
         Room room = roomManager.createRoom(maxPlayers);
         RoomPlayer host = new RoomPlayer(1, playerName); // use playerName instead of "Host"
         room.addPlayer(host);
-        return new RoomResponse(room.getRoomCode(), host.getId());
+
+        // Sending message to WebSocket channel
+        messagingTemplate.convertAndSend("/topic/room/" + room.getRoomCode(),
+            (Object)Map.of("event", "ROOM_CREATED", 
+                "hostName", host.getName(), // Ensure this is passed
+                "players", room.getPlayers().size(), 
+                "max", room.getMaxPlayers())
+        );
+
+
+        return new RoomResponse(room.getRoomCode(), host.getId(), maxPlayers, host.getName());
     }
 
     // Join an existing room
@@ -61,10 +71,11 @@ public class RoomController {
 
         // Tell everyone in the room someone joined
         messagingTemplate.convertAndSend("/topic/room/" + code,
-            (Object)Map.of("event", "PLAYER_JOINED", "players", room.getPlayers().size(), "max", room.getMaxPlayers()));
+            (Object)Map.of("event", "PLAYER_JOINED",
+                           "players", room.getPlayers().size(),
+                           "max", room.getMaxPlayers()));
         
-
-        return new RoomResponse(room.getRoomCode(), newPlayerId);
+        return new RoomResponse(room.getRoomCode(), newPlayerId, room.getMaxPlayers(), room.getHostName());
     }
 
     // Start the game
@@ -82,7 +93,9 @@ public class RoomController {
 
         // First tell everyone the game started
         messagingTemplate.convertAndSend("/topic/room/" + code,
-            (Object) Map.of("event", "GAME_STARTED"));
+            (Object) Map.of("event", "GAME_STARTED",
+                            "players", room.getPlayers()
+            ));
 
         // Then immediately send the full game state
         GameState state = gameService.getFullGameState(game);
@@ -102,12 +115,11 @@ public class RoomController {
                 r.put("roomCode", room.getRoomCode());
                 r.put("playerCount", room.getPlayers().size());
                 r.put("maxPlayers", room.getMaxPlayers());
+                r.put("hostName", room.getHostName());
                 return r;
             })
             .collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
     }
-
-
 }
