@@ -47,7 +47,6 @@ public class GameWebSocketController {
         Game game = getGame(msg.roomCode);
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         if (currentPlayer.getId() != msg.playerId) return;
-
         gameService.declareSet(msg.cardIndexes, game);
 
         // Check for winner

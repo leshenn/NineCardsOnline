@@ -24,6 +24,7 @@ public class Game {
     private final HashMap<Value, List<Card>> donkeySet = new HashMap<>();
     private int deckReshuffleTimes = 0;
     private String turnPhase = "pick";
+    private boolean madeSetInCurTurn = false;
     
     // Initialize the game
     public void initializeGame(int numPlayers) {
@@ -93,12 +94,13 @@ public class Game {
     public void playerDiscard(Player curPlayer, int discardIdx) {
         Card discardedCard = curPlayer.removeCard(discardIdx);
         discardPile.add(discardedCard);
+        madeSetInCurTurn = false;
     }
 
     public boolean validateSet(LinkedHashSet<Integer> playerSet, Player curPlayer) {
         int minSize = curPlayer.getMadeSet() ? 3 : 4;
 
-        if (playerSet.size() < minSize) return false;
+        if (playerSet.size() < minSize || madeSetInCurTurn) return false;
 
         List<Card> cardSet = new ArrayList<>();
 
@@ -199,6 +201,7 @@ public class Game {
         } else {
             // If it doesn't exist, put the suit and the new list of cards in the map
             suitSets.put(suit, new ArrayList<>(cards));
+            madeSetInCurTurn = true;
             return true;
         }
     }
@@ -210,11 +213,26 @@ public class Game {
             cardSet.add(curPlayer.getCard(part));
         }
 
-        if(cardSet.size() != 4 || suitSets.size() != 4 || !suitSets.isEmpty()) {
+        if(cardSet.size() != 4 || suitSets.size() != 4 || madeSetInCurTurn) {
             return false;
         }
 
-        return checkSameValue(cardSet);
+        boolean isValid = checkSameValue(cardSet);
+
+        if (isValid) {
+            // Sort indices highest to lowest so removing one doesn't shift the others
+            List<Integer> indices = new ArrayList<>();
+            for (int part : playerSet) {
+                indices.add(part);
+            }
+            indices.sort(Collections.reverseOrder());
+            for (int idx : indices) {
+                curPlayer.removeCard(idx);
+            }
+        }
+        
+        curPlayer.setMadeSet(isValid);
+        return isValid;
     }
 
     public boolean checkSameValue(List<Card> cardSet) {
@@ -226,18 +244,19 @@ public class Game {
             }
         }   
 
-        // This handles the case where the player only has jokers in their set, we can just return true because they can be any card
+        // This handles the case where the player only has jokers in their set
         if (startIndex == -1) {
             return false; // all jokers
         }
 
         for(Card curCard : cardSet) {
-            if(!(curCard.getValue() == cardSet.get(startIndex).getValue() || curCard.getValue() == joker)) {
+            if(!curCard.getValue().equals(cardSet.get(startIndex).getValue()) && !curCard.getValue().equals(joker)) {
                 return false;
             }
         }
 
         donkeySet.put(cardSet.get(startIndex).getValue(), new ArrayList<>(cardSet));
+        madeSetInCurTurn = true;
         return true;
     }
   
