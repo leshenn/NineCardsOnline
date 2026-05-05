@@ -59,13 +59,11 @@ public class GameService {
     }
 
     // Allow user to fill into set
-    public String fillSet(int cardIdx, Suit suit, String position, Game game) {
+    public boolean fillSet(int cardIdx, Suit suit, String position, Game game) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
-        Card tempCard = currentPlayer.getCard(cardIdx);
+        //Card tempCard = currentPlayer.getCard(cardIdx);
         boolean valid = game.fillIntoSet(cardIdx, currentPlayer, suit, position);
-        return valid
-            ? "You have filled a valid card " + tempCard.toString()
-            : "You cannot fill any set, you have choosen an invalid card OR you need to come down before creating a set";
+        return valid;
     }
 
     // current player discards, then we check win and advance the turn

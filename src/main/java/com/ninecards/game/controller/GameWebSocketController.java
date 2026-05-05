@@ -74,7 +74,14 @@ public class GameWebSocketController {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         if (currentPlayer.getId() != msg.playerId) return;
 
-        gameService.fillSet(msg.cardIdx, msg.suit, msg.position, game);
+        boolean valid = gameService.fillSet(msg.cardIdx, msg.suit, msg.position, game);
+
+        if (!valid) {
+            messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode + "/player/" + msg.playerId,
+                (Object)Map.of("event", "FILL_FAILED", "reason", "Invalid fill"));
+            return;
+        }
+
         GameState state = gameService.getFullGameState(game);
         messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode, state);
     }
