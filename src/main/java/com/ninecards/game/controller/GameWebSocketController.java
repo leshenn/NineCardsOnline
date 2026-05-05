@@ -47,7 +47,14 @@ public class GameWebSocketController {
         Game game = getGame(msg.roomCode);
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         if (currentPlayer.getId() != msg.playerId) return;
-        gameService.declareSet(msg.cardIndexes, game);
+        boolean validSet = gameService.declareSet(msg.cardIndexes, game);
+
+
+        if (!validSet) {
+            messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode + "/player/" + msg.playerId,
+                (Object)Map.of("event", "INVALID_SET", "playerId", msg.playerId, "reason", "You have created an invalid set"));
+            return;
+        }
 
         // Check for winner
         if (currentPlayer.getHand().isEmpty()) {
@@ -59,6 +66,7 @@ public class GameWebSocketController {
         GameState state = gameService.getFullGameState(game);
         messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode, state);
     }
+
     @MessageMapping("/fillset")
     public void fillSet(GameMessage msg) {
         Game game = getGame(msg.roomCode);

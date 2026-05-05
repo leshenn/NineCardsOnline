@@ -41,9 +41,9 @@ public class GameService {
     }
 
     // validate a set declared by the current player
-    public String declareSet(List<Integer> playerSet, Game game) {
+    public boolean declareSet(List<Integer> playerSet, Game game) {
         LinkedHashSet<Integer> set = new LinkedHashSet<>(playerSet);
-        if (!game.isRunning()) return "Game is over.";
+        if (!game.isRunning()) return false;
 
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         boolean valid;
@@ -55,9 +55,7 @@ public class GameService {
         }
         
 
-        return valid
-            ? "Valid set! Player " + currentPlayer.getId() + " declared a set."
-            : "Invalid set. Cards must be consecutive and of the same suit (jokers are wild) OR all sets are already created.";
+        return valid;
     }
 
     // Allow user to fill into set
