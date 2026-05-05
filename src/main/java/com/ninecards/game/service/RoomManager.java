@@ -3,6 +3,7 @@ package com.ninecards.game.service;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,8 @@ import com.ninecards.game.model.RoomStatus;
 @Component
 public class RoomManager {
     private final Map<String, Room> rooms = new HashMap<>();
+    private final Map<String, String> sessionToRoom = new ConcurrentHashMap<>();
+    private final Map<String, Integer> roomPlayerCount = new ConcurrentHashMap<>();
 
     // Generate a unique code
     private String generateCode() {
@@ -25,11 +28,10 @@ public class RoomManager {
                 sb.append(chars.charAt(random.nextInt(chars.length())));
             }
             code = sb.toString();
-        } while (rooms.containsKey(code)); // keep trying if code exists
+        } while (rooms.containsKey(code));
         return code;
     }
 
-    // Create a new room
     public Room createRoom(int maxPlayers) {
         String code = generateCode();
         Room room = new Room(code, maxPlayers);
@@ -37,19 +39,16 @@ public class RoomManager {
         return room;
     }
 
-    // Find an existing room
     public Room getRoom(String code) {
         return rooms.get(code);
     }
 
     public RoomPlayer joinRoom(String code, String playerName) {
         Room room = rooms.get(code);
-
         if (room == null) throw new RuntimeException("Room not found");
         if (room.isFull()) throw new RuntimeException("Room is full");
         if (room.getStatus() == RoomStatus.STARTED) throw new RuntimeException("Game already started");
 
-        // Player IDs are just 1, 2, 3, 4 based on join order
         int playerId = room.getPlayers().size() + 1;
         RoomPlayer player = new RoomPlayer(playerId, playerName);
         room.addPlayer(player);
@@ -58,5 +57,30 @@ public class RoomManager {
 
     public Map<String, Room> getAllRooms() {
         return rooms;
+    }
+
+    // ── Session tracking ──────────────────────────────────────────────────
+
+    public void registerSession(String sessionId, String roomCode) {
+        sessionToRoom.put(sessionId, roomCode);
+        roomPlayerCount.merge(roomCode, 1, Integer::sum);
+    }
+
+    public String getRoomCodeBySessionId(String sessionId) {
+        return sessionToRoom.get(sessionId);
+    }
+
+    public void decrementPlayerCount(String roomCode) {
+        roomPlayerCount.merge(roomCode, -1, Integer::sum);
+    }
+
+    public int getConnectedPlayerCount(String roomCode) {
+        return roomPlayerCount.getOrDefault(roomCode, 0);
+    }
+
+    public void deleteRoom(String roomCode) {
+        rooms.remove(roomCode);
+        roomPlayerCount.remove(roomCode);
+        sessionToRoom.values().removeIf(code -> code.equals(roomCode));
     }
 }
