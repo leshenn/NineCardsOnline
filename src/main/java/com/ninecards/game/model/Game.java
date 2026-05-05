@@ -120,9 +120,10 @@ public class Game {
             for (int idx : indices) {
                 curPlayer.removeCard(idx);
             }
+            curPlayer.setMadeSet(isValid);
         }
         
-        curPlayer.setMadeSet(isValid);
+        
         return isValid;
     }
 
