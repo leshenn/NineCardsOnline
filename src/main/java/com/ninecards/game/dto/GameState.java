@@ -21,6 +21,7 @@ public class GameState {
     public HashMap<Value, List<Card>> donkeySets;
     public String turnPhase; 
     public boolean madeSet;
+    public String sound;
 
     public GameState getGameState(Game game) {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());

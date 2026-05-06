@@ -104,11 +104,13 @@ public class GameWebSocketController {
         // Check for winner
         if (currentPlayer.getHand().isEmpty()) {
             messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode,
-                (Object)Map.of("event", "GAME_OVER", "winner", currentPlayer.getId(), "sound", "PLAY_SOUND"));
+                (Object)Map.of("event", "GAME_OVER", "winner", currentPlayer.getId()));
             return;
         }
         
         GameState state = gameService.getFullGameState(game);
+
+        state.sound = "PLAY_SOUND";
         messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode, state);
     }
 
