@@ -97,6 +97,12 @@ public class RoomController {
                             "players", room.getPlayers()
             ));
 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
         // Then immediately send the full game state
         GameState state = gameService.getFullGameState(game);
         messagingTemplate.convertAndSend("/topic/room/" + code, (Object) state);
