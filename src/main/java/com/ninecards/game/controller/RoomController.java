@@ -89,6 +89,13 @@ public class RoomController {
         Game game = new Game();
         room.setGame(game);
         game.initializeGame(room.getPlayers().size());
+
+        try {
+                Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
         room.setStatus(RoomStatus.STARTED);
 
         // First tell everyone the game started
@@ -97,11 +104,6 @@ public class RoomController {
                             "players", room.getPlayers()
             ));
 
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
 
         // Then immediately send the full game state
         GameState state = gameService.getFullGameState(game);
