@@ -104,7 +104,7 @@ public class GameWebSocketController {
         // Check for winner
         if (currentPlayer.getHand().isEmpty()) {
             messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode,
-                (Object)Map.of("event", "GAME_OVER", "winner", currentPlayer.getId()));
+                (Object)Map.of("event", "GAME_OVER", "winner", currentPlayer.getId(), "sound", "PLAY_SOUND"));
             return;
         }
         
