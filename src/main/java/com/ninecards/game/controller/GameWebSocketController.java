@@ -82,6 +82,13 @@ public class GameWebSocketController {
             return;
         }
 
+        // Check for winner
+        if (currentPlayer.getHand().isEmpty()) {
+            messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode,
+                (Object)Map.of("event", "GAME_OVER", "winner", currentPlayer.getId()));
+            return;
+        }
+
         GameState state = gameService.getFullGameState(game);
         messagingTemplate.convertAndSend("/topic/room/" + msg.roomCode, state);
     }
