@@ -89,13 +89,6 @@ public class RoomController {
         Game game = new Game();
         room.setGame(game);
         game.initializeGame(room.getPlayers().size());
-
-        try {
-                Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        
         room.setStatus(RoomStatus.STARTED);
 
         // First tell everyone the game started
