@@ -63,6 +63,7 @@ public class GameService {
         Player currentPlayer = game.getPlayer(game.currentPlayerTurn());
         //Card tempCard = currentPlayer.getCard(cardIdx);
         boolean valid = game.fillIntoSet(cardIdx, currentPlayer, suit, position);
+        if(valid) game.checkGameStatus();
         return valid;
     }
 
