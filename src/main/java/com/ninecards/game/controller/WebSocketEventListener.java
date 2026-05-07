@@ -35,14 +35,20 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleDisconnect(SessionDisconnectEvent event) {
-        String roomCode = roomManager.getRoomCodeBySessionId(event.getSessionId());
+        String sessionId = event.getSessionId();
+        String roomCode = roomManager.getRoomCodeBySessionId(sessionId);
         if (roomCode == null) return;
 
+        roomManager.unregisterSession(sessionId);
         roomManager.decrementPlayerCount(roomCode);
 
-        if (roomManager.getConnectedPlayerCount(roomCode) == 0) {
+        if (!roomManager.isGameStarted(roomCode)) {
+            // Game never started — just delete the room silently
+            roomManager.deleteRoom(roomCode);
+        } else if (roomManager.getConnectedPlayerCount(roomCode) == 0) {
+            // Game was running but everyone left
             messagingTemplate.convertAndSend("/topic/room/" + roomCode,
-                (Object)Map.of("event", "ROOM_CLOSED", "reason", "All players disconnected"));
+                (Object) Map.of("event", "ROOM_CLOSED", "reason", "All players disconnected"));
             roomManager.deleteRoom(roomCode);
         }
     }

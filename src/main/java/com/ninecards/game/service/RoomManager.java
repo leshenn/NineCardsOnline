@@ -83,4 +83,15 @@ public class RoomManager {
         roomPlayerCount.remove(roomCode);
         sessionToRoom.values().removeIf(code -> code.equals(roomCode));
     }
+
+    public void unregisterSession(String sessionId) {
+        String roomCode = sessionToRoom.remove(sessionId); // remove from map
+        if (roomCode != null) {
+            roomPlayerCount.merge(roomCode, -1, Integer::sum); // decrement count
+        }
+    }
+    public boolean isGameStarted(String roomCode) {
+        Room room = rooms.get(roomCode);
+        return room != null && room.getStatus() == RoomStatus.STARTED;
+    }
 }
