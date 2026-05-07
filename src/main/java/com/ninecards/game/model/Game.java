@@ -422,31 +422,77 @@ public class Game {
         }
 
         // Check joker replacement inside the set
+        // for (int i = 0; i < cards.size(); i++) {
+        //     if (cards.get(i).getValue() == joker) {
+        //         Integer leftValue = null;
+        //         for (int l = i - 1; l >= 0; l--) {
+        //             if (cards.get(l).getValue() != joker) {
+        //                 leftValue = cards.get(l).getValue().getNumericValue();
+        //                 break;
+        //             }
+        //         }
+
+        //         Integer rightValue = null;
+        //         for (int r = i + 1; r < cards.size(); r++) {
+        //             if (cards.get(r).getValue() != joker) {
+        //                 rightValue = cards.get(r).getValue().getNumericValue();
+        //                 break;
+        //             }
+        //         }
+
+        //         int newValue = card.getValue().getNumericValue();
+        //         // Corrected the filling of cards to take jokers
+        //         boolean fitsLeft = (leftValue == null) || (newValue > leftValue);
+        //         boolean fitsRight = (rightValue == null) || (newValue < rightValue);
+        //         boolean fitsSuit = cardSuit == card.getSuit();
+
+        //         if (fitsLeft && fitsRight && fitsSuit) {
+        //             Card jokerCard = cards.get(i);
+        //             cards.set(i, card);
+        //             curPlayer.removeCard(cardIdx);
+        //             curPlayer.addToHandFromDiscard(jokerCard);
+        //             sortHand();
+        //             return true;
+        //         }
+        //     }
+        // }
+
         for (int i = 0; i < cards.size(); i++) {
             if (cards.get(i).getValue() == joker) {
+
                 Integer leftValue = null;
+                int leftIndex = -1;
                 for (int l = i - 1; l >= 0; l--) {
                     if (cards.get(l).getValue() != joker) {
                         leftValue = cards.get(l).getValue().getNumericValue();
+                        leftIndex = l;
                         break;
                     }
                 }
 
                 Integer rightValue = null;
+                int rightIndex = -1;
                 for (int r = i + 1; r < cards.size(); r++) {
                     if (cards.get(r).getValue() != joker) {
                         rightValue = cards.get(r).getValue().getNumericValue();
+                        rightIndex = r;
                         break;
                     }
                 }
 
+                // Derive exact expected value from whichever neighbour we found
+                Integer expectedValue = null;
+                if (leftValue != null) {
+                    expectedValue = leftValue + (i - leftIndex); // e.g. left is 5 at index 1, joker at index 2 → expected 6
+                } else if (rightValue != null) {
+                    expectedValue = rightValue - (rightIndex - i); // e.g. right is 7 at index 3, joker at index 2 → expected 6
+                }
+
                 int newValue = card.getValue().getNumericValue();
-                // Corrected the filling of cards to take jokers
-                boolean fitsLeft = (leftValue == null) || (newValue > leftValue);
-                boolean fitsRight = (rightValue == null) || (newValue < rightValue);
+                boolean fitsValue = expectedValue != null && newValue == expectedValue;
                 boolean fitsSuit = cardSuit == card.getSuit();
 
-                if (fitsLeft && fitsRight && fitsSuit) {
+                if (fitsValue && fitsSuit) {
                     Card jokerCard = cards.get(i);
                     cards.set(i, card);
                     curPlayer.removeCard(cardIdx);
